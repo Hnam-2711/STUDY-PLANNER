@@ -1,6 +1,3 @@
-# STUDY-PLANNER
-Dự án phần mềm: Quản lí và tính toán kết quả học tập
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -20,7 +17,7 @@ Dự án phần mềm: Quản lí và tính toán kết quả học tập
       display: flex;
       align-items: center;
       justify-content: center;
-      backdrop-filter: blur(4px);
+       backdrop-filter: blur(4px); 
     }
 
     /* ---------- KHUNG TỔNG CHIA 2 BÊN ---------- */
@@ -111,7 +108,7 @@ Dự án phần mềm: Quản lí và tính toán kết quả học tập
       margin-top: 10px;
       display: block;
       color: #11468F;
-      text-align: center;
+text-align: center;
       text-decoration: none;
       font-size: 15px;
     }
@@ -229,7 +226,7 @@ Dự án phần mềm: Quản lí và tính toán kết quả học tập
     border-radius: 10px;
     font-size: 18px;
     cursor: pointer;
-    margin-top: 15px;
+margin-top: 15px;
   }
 
   .btn-confirm:hover {
@@ -353,7 +350,7 @@ Dự án phần mềm: Quản lí và tính toán kết quả học tập
     font-weight: bold;
     padding: 15px;
     border: none;
-    border-radius: 10px;
+border-radius: 10px;
     font-size: 18px;
     cursor: pointer;
     width: 100%;
@@ -440,8 +437,271 @@ Dự án phần mềm: Quản lí và tính toán kết quả học tập
   });
 </script>
 
+<!-- Ẩn toàn bộ khung quên mật khẩu khi chưa bấm -->
+<style>
+  .box { 
+    display: none; 
+    background-color: rgba(255,255,255,0.9);
+    border-radius: 25px;
+    padding: 40px 50px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 4px 25px rgba(0,0,0,0.15);
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+    margin: auto;
+  }
+  .box.active { display: flex; }
+  .box input {
+    margin: 10px 0;
+    padding: 15px;
+    border: 2px solid #000;
+    border-radius: 10px;
+    font-size: 16px;
+  }
+  .box button {
+    background-color: #11468F;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 18px;
+    padding: 12px;
+    margin-top: 10px;
+    cursor: pointer;
+  }
+  .box button:hover { background-color: #0d3870; }
+  .success-icon { font-size: 48px; margin-bottom: 10px; }
+</style>
+
+<!-- 4 bước quên mật khẩu -->
+<div class="container" id="forgotContainer" style="display: none;">
+  <!-- Bước 1 -->
+  <div class="box active" id="step1">
+    <h2>Tìm tài khoản của bạn</h2>
+    <p>Vui lòng nhập email hoặc số điện thoại để tìm tài khoản</p>
+    <input type="text" placeholder="Email hoặc số điện thoại">
+    <button onclick="nextStep(2)">Xác nhận</button>
+  </div>
+
+  <!-- Bước 2 -->
+  <div class="box" id="step2">
+    <h2>Nhập mã bảo mật</h2>
+    <p>Chúng tôi đã gửi mã đến email của bạn</p>
+    <input type="text" placeholder="Nhập mã bảo mật">
+    <button onclick="nextStep(3)">Xác nhận</button>
+  </div>
+
+  <!-- Bước 3 -->
+  <div class="box" id="step3">
+    <h2>Đặt lại mật khẩu</h2>
+    <input type="password" placeholder="Mật khẩu mới">
+    <input type="password" placeholder="Xác nhận mật khẩu mới">
+    <button onclick="nextStep(4)">Xác nhận</button>
+  </div>
+
+  <!-- Bước 4 -->
+  <div class="box" id="step4">
+    <div class="success-icon">✅</div>
+    <h2>Đổi mật khẩu thành công!</h2>
+    <button onclick="backToLogin()">Đăng nhập</button>
+  </div>
+</div>
+
+<script>
+  // Ẩn hiện từng bước
+  function nextStep(step) {
+    document.querySelectorAll('.box').forEach(box => box.classList.remove('active'));
+    document.getElementById('step' + step).classList.add('active');
+  }
+
+  // Khi bấm vào "Quên mật khẩu"
+  const forgotLink = document.querySelector('.forgot');
+  const loginbox = document.querySelector('.login-box');
+  const forgotContainer = document.getElementById('forgotContainer');
+
+  if (forgotLink) {
+    forgotLink.addEventListener('click', function(e) {
+      e.preventDefault();
+      loginBox.style.display = 'none';
+      forgotContainer.style.display = 'block';
+      nextStep(1);
+    });
+  }
+
+  // Khi bấm "Đăng nhập" ở bước cuối
+  function backToLogin() {
+    forgotContainer.style.display = 'none';
+    loginBox.style.display = 'flex';
+  }
+</script>
+
+<!-- ---------- GIAO DIỆN SAU KHI ĐĂNG NHẬP ---------- -->
+<div class="main-menu" style="display: none; text-align:center; background-color:white; height:100vh; width:100vw; flex-direction:column; justify-content:center; align-items:center; position:relative;">
+
+  <!-- 🔹 GÓC TRÁI: STUDY PLANNER VÀ 3 BIỂU TƯỢNG DƯỚI -->
+  <div style="position:absolute; top:20px; left:20px; display:flex; flex-direction:column; align-items:flex-start;">
+    <h2 style="margin:0; font-size:22px; color:#0b132b; font-weight:700;">Study Planner</h2>
+    <div style="margin-top:4px; display:flex; gap:6px; font-size:22px;">
+      <span>📚</span>
+      <span>🎯</span>
+      <span>📅</span>
+    </div>
+  </div>
+
+  <!-- 🔹 CÁC NÚT CHÍNH Ở GIỮA -->
+  <div style="display: grid; grid-template-columns: repeat(2, 250px); gap: 30px; justify-content: center;">
+    <button style="background-color:#11468F; color:white; border:none; border-radius:20px; padding:40px 20px; font-size:18px; font-weight:bold; cursor:pointer;">Nhập/Chỉnh sửa danh sách môn học</button>
+    <button style="background-color:#00A651; color:white; border:none; border-radius:20px; padding:40px 20px; font-size:18px; font-weight:bold; cursor:pointer;">Đề xuất phương án học tập</button>
+    <button style="background-color:#C10000; color:white; border:none; border-radius:20px; padding:40px 20px; font-size:18px; font-weight:bold; cursor:pointer;">Tiến độ học tập</button>
+    <button style="background-color:#D2691E; color:white; border:none; border-radius:20px; padding:40px 20px; font-size:18px; font-weight:bold; cursor:pointer;">Gợi ý thời khóa biểu</button>
+  </div>
+</div>
+
+<script>
+  const loginButton = document.querySelector(".btn-login");
+  const mainMenu = document.querySelector(".main-menu");
+
+  loginButton.addEventListener("click", () => {
+    // Ẩn phần đăng nhập và các khung khác
+    document.querySelector(".container").style.display = "none";
+    document.querySelectorAll(".register-box, .verify-box, .success-box, #forgotContainer")
+      .forEach(box => box.style.display = "none");
+
+    // 🔹 Tắt ảnh nền, để nền trắng
+    document.body.style.backgroundImage = "none";
+    document.body.style.backdropFilter = "none";
+    document.body.style.backgroundColor = "white";
+
+    // Hiện giao diện chính
+    mainMenu.style.display = "flex";
+  });
+</script>
+
+<!-- ========== GIAO DIỆN NHẬP/CHỈNH SỬA DANH SÁCH MÔN HỌC ========== -->
+<div class="subject-editor" style="display:none; height:100vh; width:100vw; background-color:white; font-family:'Segoe UI',sans-serif; padding:40px; box-sizing:border-box; position:relative;">
+
+  <!-- Tiêu đề và góc phải -->
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <h1 style="font-size:30px; font-weight:700; color:#0b132b; display:flex; align-items:center; gap:10px;">
+      STUDY PLANNER <span style="font-size:22px;">📚 🎯 📅</span>
+    </h1>
+    <div style="display:flex; align-items:center; gap:10px;">
+      <span style="font-size:24px;">🎓</span>
+      <span style="color:#11468F; font-weight:bold; cursor:pointer;">VIE</span>
+    </div>
+  </div>
+
+  <!-- Thanh tiêu đề chính -->
+  <div style="text-align:center; margin-top:15px;">
+    <button style="background-color:#777; color:white; border:none; border-radius:10px; padding:10px 25px; font-weight:bold; font-size:17px;">
+      Nhập/Chỉnh sửa danh sách môn học
+    </button>
+  </div>
+
+  <!-- Khối nội dung chia 2 bên -->
+  <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-top:30px;">
+    
+    <!-- Cột bên trái -->
+    <div style="background-color:#f8f8f8; border-radius:20px; padding:30px; width:38%; box-shadow:0 4px 15px rgba(0,0,0,0.1);">
+      <h3 style="margin-top:0;">Thêm môn học mới</h3>
+      <input id="subjectName" type="text"style="width:100%; padding:12px; border:2px solid #ccc; border-radius:10px; margin-bottom:15px; font-size:16px;">
+
+      <label><b>Số tín chỉ</b></label>
+      <input id="credit" type="number" min="1" max="5" placeholder="1 - 5" style="width:100%; padding:12px; border:2px solid #ccc; border-radius:10px; margin-bottom:15px; font-size:16px;">
+
+      <div style="display:flex; gap:10px;">
+        <input id="grade4" type="text" placeholder="Điểm chữ (hệ 4)" style="flex:1; padding:12px; border:2px solid #ccc; border-radius:10px; font-size:16px;">
+        <input id="grade10" type="text" placeholder="Điểm hệ 10" style="flex:1; padding:12px; border:2px solid #ccc; border-radius:10px; font-size:16px;">
+      </div>
+
+      <input id="semester" type="text" placeholder="HK,Năm Học" style="width:100%; padding:12px; border:2px solid #ccc; border-radius:10px; margin-top:15px; font-size:16px;">
+
+      <button id="addSubject" style="background-color:#00A651; color:white; border:none; border-radius:10px; font-size:18px; font-weight:bold; padding:12px; margin-top:20px; cursor:pointer; width:100%;">
+        Thêm
+      </button>
+    </div>
+
+    <!-- Cột bên phải -->
+    <div style="background-color:#f8f8f8; border-radius:20px; padding:30px; width:58%; box-shadow:0 4px 15px rgba(0,0,0,0.1);">
+      <h3 style="margin-top:0;">Danh sách môn học hiện tại</h3>
+      <table id="subjectTable" style="width:100%; border-collapse:collapse; text-align:center;">
+        <thead style="background-color:#e0e0e0;">
+          <tr>
+            <th style="padding:10px;">STT</th>
+            <th style="padding:10px;">Môn học</th>
+            <th style="padding:10px;">Số TC</th>
+            <th style="padding:10px;">H4</th>
+            <th style="padding:10px;">H10</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <div style="display:flex; justify-content:space-between; margin-top:20px; background-color:white; border-radius:10px; padding:10px 20px;">
+        <div><b>Tổng tín chỉ tích lũy:</b> <span id="totalTC" style="color:red;">0</span></div>
+        <div><b>Điểm hệ 4:</b> <span id="avg4" style="color:red;">0</span></div>
+        <div><b>Điểm hệ 10:</b> <span id="avg10" style="color:red;">0</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chú thích cuối -->
+  <p style="color:#0073e6; font-weight:bold; text-align:center; margin-top:25px;">
+    Vui lòng nhập tên môn học, số tín chỉ chính xác theo Chương trình Đào tạo<br>
+    và nhập chính xác số điểm theo ở hệ chữ và hệ 10 đạt được.
+  </p>
+</div>
+
+<script>
+  // Khi bấm nút "Nhập/Chỉnh sửa danh sách môn học" trong main menu
+  const editBtn = document.querySelector(".main-menu button:first-child");
+  const subjectEditor = document.querySelector(".subject-editor");
+
+  editBtn.addEventListener("click", () => {
+    document.querySelector(".main-menu").style.display = "none";
+    subjectEditor.style.display = "block";
+  });
+
+  // Thêm môn học
+  const addBtn = document.getElementById("addSubject");
+  const tableBody = document.querySelector("#subjectTable tbody");
+  let count = 0, totalTC = 0, totalH4 = 0, totalH10 = 0;
+
+  addBtn.addEventListener("click", () => {
+    const name = document.getElementById("subjectName").value.trim();
+    const tc = parseFloat(document.getElementById("credit").value);
+    const h4 = parseFloat(document.getElementById("grade4").value);
+    const h10 = parseFloat(document.getElementById("grade10").value);
+
+    if (!name || isNaN(tc) || isNaN(h4) || isNaN(h10)) {
+      alert("Vui lòng nhập đầy đủ thông tin hợp lệ!");
+      return;
+    }
+
+    count++;
+    const row = document.createElement("tr");
+    row.innerHTML = `<td>${count}</td><td>${name}</td><td>${tc}</td><td>${h4}</td><td>${h10}</td>`;
+    tableBody.appendChild(row);
+
+    totalTC += tc;
+    totalH4 += h4 * tc;
+    totalH10 += h10 * tc;
+
+    document.getElementById("totalTC").textContent = totalTC.toFixed(1);
+    document.getElementById("avg4").textContent = (totalH4 / totalTC).toFixed(2);
+    document.getElementById("avg10").textContent = (totalH10 / totalTC).toFixed(2);
+
+    // Reset form
+    document.getElementById("subjectName").value = "";
+    document.getElementById("credit").value = "";
+    document.getElementById("grade4").value = "";
+    document.getElementById("grade10").value = "";
+    document.getElementById("semester").value = "";
+  });
+</script>
+
 
 
 </body>
 </html>
-
